@@ -1,57 +1,96 @@
 package graphql;
 
-// Import the business logic class responsible for managing "UniteEnseignement" data
+// Import the business logic classes responsible for managing "UniteEnseignement" and "Module" data
+import business.ModuleBusiness;
 import business.UniteEnseignementBusiness;
 
-// Import the GraphQL library class used to define the root of GraphQL mutations
+// Import the GraphQL library class used to define the root of GraphQL queries
 import com.coxautodev.graphql.tools.GraphQLRootResolver;
 
-// Import the entity class representing a Teaching Unit (Unité d’Enseignement)
+// Import the entity classes
+import entities.Module;
 import entities.UniteEnseignement;
 
-/**
- * This class defines all GraphQL mutations related to the "UniteEnseignement" entity.
- * A mutation in GraphQL is used to perform write operations (create, update, delete)
- * as opposed to queries, which are for read operations.
- */
-public class MutationResolver implements GraphQLRootResolver {
+import java.util.List;
 
-    // Attribute used to access the business logic (service layer)
+/**
+ * This class acts as the root resolver for GraphQL queries.
+ * It tells GraphQL how to fetch data when a query is executed.
+ *
+ * In this example, it handles queries related to "UniteEnseignement" and "Module".
+ */
+public class QueryResolver implements GraphQLRootResolver {
+
+    // Attributes used to call the business logic layer (service) for data operations
     public UniteEnseignementBusiness helper;
+    public ModuleBusiness moduleHelper;
 
     /**
      * Constructor of the resolver.
-     * It initializes the business helper that manages the teaching units.
+     * It initializes the business helpers that provide methods to retrieve UE and Module data.
      */
-    public MutationResolver() {
+    public QueryResolver(){
         helper = new UniteEnseignementBusiness();
+        moduleHelper = new ModuleBusiness();
     }
 
     /**
-     * GraphQL Mutation: addUniteEnseignement
+     * GraphQL Query: allUEs
      *
-     * This method allows clients to add a new "Unité d’Enseignement" to the system.
+     * This method will be automatically exposed to the GraphQL schema as a query named "allUEs".
      *
-     * When a GraphQL mutation like the following is executed:
+     * When a client sends the GraphQL query:
      *
-     * mutation {
-     *     addUniteEnseignement(
-     *         code: 101,
-     *         domaine: "Informatique",
-     *         responsable: "Dr. Smith",
-     *         credits: 4,
-     *         semestre: 2
-     *     )
-     * }
+     *    query {
+     *        allUEs {
+     *            code
+     *            domaine
+     *        }
+     *    }
      *
-     * GraphQL calls this Java method to create and save a new teaching unit.
+     * GraphQL will call this method to return a list of "UniteEnseignement" objects.
+     *
+     * @return List of all Teaching Units (Unité d’Enseignement)
      */
-    public boolean addUniteEnseignement(int code, String domaine, String responsable, int credits, int semestre) {
-        // Create a new UniteEnseignement object with the provided parameters
-        UniteEnseignement ue = new UniteEnseignement(code, domaine, responsable, credits, semestre);
+    public List<UniteEnseignement> allUEs(){
+        // Delegates the request to the business layer method getListeUE()
+        // which fetches all UE entities (e.g., from a database or a static list)
+        return helper.getListeUE();
+    }
 
-        // Call the business logic method to add the new unit
-        // The helper handles the actual persistence or logic of adding the entity
-        return helper.addUniteEnseignement(ue);
+    // 1. Récupération de la liste de tous les modules
+    public List<Module> allModules() {
+        return moduleHelper.getAllModules();
+    }
+
+    public List<Module> getAllModules() {
+        return moduleHelper.getAllModules();
+    }
+
+    // 4. Récupération de la liste des modules ayant un type spécifique
+    public List<Module> getModulesByType(Module.TypeModule type) {
+        return moduleHelper.getModulesByType(type);
+    }
+
+    public List<Module> modulesByType(Module.TypeModule type) {
+        return moduleHelper.getModulesByType(type);
+    }
+
+    // 5. Récupération d'un module ayant une matricule spécifique
+    public Module getModuleByMatricule(String matricule) {
+        return moduleHelper.getModuleByMatricule(matricule);
+    }
+
+    public Module moduleByMatricule(String matricule) {
+        return moduleHelper.getModuleByMatricule(matricule);
+    }
+
+    // Récupération des modules d'une UE spécifique
+    public List<Module> getModulesByUE(int codeUE) {
+        UniteEnseignement ue = helper.getUEByCode(codeUE);
+        if (ue == null) {
+            ue = new UniteEnseignement(codeUE, null, null, 0, 0);
+        }
+        return moduleHelper.getModulesByUE(ue);
     }
 }

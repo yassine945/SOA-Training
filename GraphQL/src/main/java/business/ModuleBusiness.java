@@ -1,95 +1,84 @@
-package business;
+package entities;
 
-import entities.Module;
-import entities.UniteEnseignement;
-import business.UniteEnseignementBusiness;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-public class ModuleBusiness {
-    private static List<Module> modules;
-private UniteEnseignementBusiness uniteEnseignementBusiness=new UniteEnseignementBusiness();
-    public ModuleBusiness() {
-        modules = new ArrayList<Module>();
-        // Initialisation avec quelques données de test
-        modules.add(new Module("M101", "Algorithmique", 3, 30, Module.TypeModule.PROFESSIONNEL,uniteEnseignementBusiness.getUEByCode(1)));
-        modules.add(new Module("M102", "Base de données", 2, 20, Module.TypeModule.PROFESSIONNEL,uniteEnseignementBusiness.getUEByCode(1)));
-        modules.add(new Module("M201", "Communication", 1, 15, Module.TypeModule.TRANSVERSAL,uniteEnseignementBusiness.getUEByCode(2)));
+public class Module {
+    private String matricule;
+    private String nom;
+    private int coefficient;
+    private int volumeHoraire;
+    private TypeModule type;
+    private UniteEnseignement uniteEnseignement; // Référence vers l'UE associée
+    public Module(){}
+    // Constructeur
+    public Module(String matricule, String nom, int coefficient, int volumeHoraire, TypeModule type) {
+        this.matricule = matricule;
+        this.nom = nom;
+        this.coefficient = coefficient;
+        this.volumeHoraire = volumeHoraire;
+        this.type = type;
+    }
+    public Module(String matricule, String nom, int coefficient, int volumeHoraire, TypeModule type, UniteEnseignement uniteEnseignement) {
+        this.matricule = matricule;
+        this.nom = nom;
+        this.coefficient = coefficient;
+        this.volumeHoraire = volumeHoraire;
+        this.type = type;
+        this.uniteEnseignement=uniteEnseignement;
+    }
+    // Enumération TypeModule
+    public enum TypeModule {
+        TRANSVERSAL,
+        PROFESSIONNEL,
+        RECHERCHE
     }
 
-    // Ajouter un module
-    public boolean addModule(Module module) {
-
-        int code=module.getUniteEnseignement().getCode();
-       UniteEnseignement ue=uniteEnseignementBusiness.getUEByCode(code);
-       if(ue!=null){
-           module.setUniteEnseignement(ue);
-           return modules.add(module);
-    }
-        return false;
-}
-
-    // Récupérer un module par son matricule
-    public Module getModuleByMatricule(String matricule) {
-        for (Module m : modules) {
-            if (m.getMatricule().equals(matricule)) {
-                return m;
-            }
-        }
-        return null;
+    // Getters et Setters
+    public String getMatricule() {
+        return matricule;
     }
 
-    // Récupérer les modules par type
-    public List<Module> getModulesByType(Module.TypeModule type) {
-        List<Module> result = new ArrayList<>();
-        for (Module m : modules) {
-            if (m.getType() == type) {
-                result.add(m);
-            }
-        }
-        return result;
+    public void setMatricule(String matricule) {
+        this.matricule = matricule;
     }
 
-    // Mettre à jour un module
-    public boolean updateModule(String matricule, Module updatedModule) {
-        for (int i = 0; i < modules.size(); i++) {
-            if (modules.get(i).getMatricule().equals(matricule)) {
-                modules.set(i, updatedModule);
-                return true;
-            }
-        }
-        return false;
+    public String getNom() {
+        return nom;
     }
 
-    // Supprimer un module
-    public boolean deleteModule(String matricule) {
-        Iterator<Module> iterator = modules.iterator();
-        while (iterator.hasNext()) {
-            Module m = iterator.next();
-            if (m.getMatricule().equals(matricule)) {
-                iterator.remove();
-                return true;
-            }
-        }
-        return false;
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
-    // Récupérer tous les modules
-    public List<Module> getAllModules() {
-        return modules;
+    public int getCoefficient() {
+        return coefficient;
     }
 
-    // Récupérer les modules d'une UE spécifique
-    public List<Module> getModulesByUE(UniteEnseignement ue) {
-        List<Module> result = new ArrayList<>();
-        for (Module m : modules) {
-            if (m.getUniteEnseignement() != null &&
-                    m.getUniteEnseignement().getCode() == ue.getCode()) {
-                result.add(m);
-            }
-        }
-        return result;
+    public void setCoefficient(int coefficient) {
+        this.coefficient = coefficient;
     }
+
+    public int getVolumeHoraire() {
+        return volumeHoraire;
+    }
+
+    public void setVolumeHoraire(int volumeHoraire) {
+        this.volumeHoraire = volumeHoraire;
+    }
+
+    public TypeModule getType() {
+        return type;
+    }
+
+    public void setType(TypeModule type) {
+        this.type = type;
+    }
+
+    public UniteEnseignement getUniteEnseignement() {
+        return uniteEnseignement;
+    }
+
+    public void setUniteEnseignement(UniteEnseignement uniteEnseignement) {
+        this.uniteEnseignement = uniteEnseignement;
+    }
+
+
 }
